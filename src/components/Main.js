@@ -1,46 +1,57 @@
-//CSS
+//css
 require('normalize.css/normalize.css');
-require('styles/main.scss');
+require('styles/App.scss');
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-//获取图片相关的数据
-var imageDatas = require('../images/imageDatas.json');
+//获取图片的相关数据
+let imageDatas = require('../data/imageDatas.json');
 
-//利用自执行函数，将图片名信息转成图片URL路径信息
-imageDatas = (function getImageURL(imageDatasArr){
-  for(var i = 0,j = imageDatasArr.length;i<j;j++){
-    var singleImageData = imageDatasArr[i];
-
-    singleImageData.imageURL = require('../images'+singleImageData.filename);
-    imageDatasArr[i] = singleImageData;
+function getImageUrl(imageDataArr){
+  for (let i= 0,j=imageDataArr.length; i<j;i++){
+    var singeImageData = imageDataArr[i];
+    singeImageData.imageUrl = require('../images/'+singeImageData.fileName);
+    imageDataArr[i] = singeImageData;
   }
-  return imageDatasArr;
-})(imageDatas);
+  return imageDataArr;
+}
+imageDatas = getImageUrl(imageDatas);
 
-
-
-let yeomanImage = require('../images/yeoman.png');
-
-var GalleryByReactApp = React.createClass({
+//图片部分
+let ImgFigure = React.createClass({
   render:function(){
     return(
-      <section className="stage">
-        <section className="img-sec">
-          <span>hello</span>
-        </section>
-        <nav className="ctrl-nav">
-
-        </nav>
-      </section>
+      <figure>
+        <img src={this.props.data.imageUrl} alt={this.props.data.title} />
+        <figcaption>
+          <h2>{this.props.data.title}</h2>
+        </figcaption>
+      </figure>
     )
   }
 });
+class AppComponent extends React.Component {
+  render() {
+    let controllerUnits = [],
+      imgFigures = [];
+    imageDatas.forEach(function(value){
+      imgFigures.push(<ImgFigure data={value}/>)
+    });
+    return (
+      <section className="stage">
+        <div className="notice">Please edit <code>src/components/Main.js</code> to get started!</div>
+        <section className="img-sec">
+          {imgFigures}
+        </section>
+        <nav className="controller-nav">
+          {controllerUnits}
+        </nav>
+      </section>
+    );
+  }
+}
 
+AppComponent.defaultProps = {
+};
 
-
-
-React.render(<GalleryByReactApp />,document.getElementById('content'));
-
-module.exports = GalleryByReactApp;
+export default AppComponent;
